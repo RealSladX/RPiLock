@@ -6,13 +6,12 @@ import RPi.GPIO as GPIO
 
 PN532_I2C = Pn532I2c(1)
 nfc = Pn532(PN532_I2C)
-
 SOLENOID_PIN = 17
 
 def setup():
-
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(SOLENOID_PIN, GPIO.OUT)
+	
 	# Initialize the PN532 NFC module
 	nfc.begin()
 
@@ -50,13 +49,14 @@ if __name__ == '__main__':
 	try:
 		active_card = None
 		while True:
+			# Scan for a card if locker is not assigned one
 			while not active_card:
 				active_card = scan_card()
 			
 			print("Opening locker for 5 seconds.")
 			open_solenoid(5)
 
-
+			# Scan for a card and check if it's the one assigned to the locker
 			while active_card:
 				new_card = scan_card()
 				if new_card == active_card:
